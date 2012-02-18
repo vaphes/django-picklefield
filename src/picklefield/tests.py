@@ -82,19 +82,30 @@ class PickledObjectFieldTests(TestCase):
         >>> # But with cPickle the two dumps() are not the same!
         >>> # Both will generate the same object when loads() is called though.
 
-        We can solve this by calling optimize() on the value after
+        We can solve this by calling deepcopy() on the value before
         pickling it, as this copies everything to a brand new data
         structure.
 
         >>> from cPickle import dumps
-        >>> from picklefield.fields import optimize
+        >>> from copy import deepcopy
         >>> t = ({1: 1, 2: 4, 3: 6, 4: 8, 5: 10}, 'Hello World', (1, 2, 3, 4, 5), [1, 2, 3, 4, 5])
-        >>> optimize(dumps(({1: 1, 2: 4, 3: 6, 4: 8, 5: 10}, 'Hello World', (1, 2, 3, 4, 5), [1, 2, 3, 4, 5]))))
+        >>> dumps(deepcopy(({1: 1, 2: 4, 3: 6, 4: 8, 5: 10}, 'Hello World', (1, 2, 3, 4, 5), [1, 2, 3, 4, 5])))
         "((dp1\nI1\nI1\nsI2\nI4\nsI3\nI6\nsI4\nI8\nsI5\nI10\nsS'Hello World'\np2\n(I1\nI2\nI3\nI4\nI5\ntp3\n(lp4\nI1\naI2\naI3\naI4\naI5\nat."
         >>> dumps(deepcopy(t))
         "((dp1\nI1\nI1\nsI2\nI4\nsI3\nI6\nsI4\nI8\nsI5\nI10\nsS'Hello World'\np2\n(I1\nI2\nI3\nI4\nI5\ntp3\n(lp4\nI1\naI2\naI3\naI4\naI5\nat."
-        >>> # Using optimize() means that now both dumps() are idential.
-        >>> # It may not be necessary, but optimize() ensures that lookups will always work.
+        >>> # Using deepcopy() beforehand means that now both dumps() are idential.
+        >>> # It may not be necessary, but deepcopy() ensures that lookups will always work.
+
+        Unfortunately calling copy() alone doesn't seem to fix the
+        problem as it lies primarily with complex data types.
+
+        >>> from cPickle import dumps
+        >>> from copy import copy
+        >>> t = ({1: 1, 2: 4, 3: 6, 4: 8, 5: 10}, 'Hello World', (1, 2, 3, 4, 5), [1, 2, 3, 4, 5])
+        >>> dumps(copy(({1: 1, 2: 4, 3: 6, 4: 8, 5: 10}, 'Hello World', (1, 2, 3, 4, 5), [1, 2, 3, 4, 5])))
+        "((dp1\nI1\nI1\nsI2\nI4\nsI3\nI6\nsI4\nI8\nsI5\nI10\nsS'Hello World'\np2\n(I1\nI2\nI3\nI4\nI5\ntp3\n(lp4\nI1\naI2\naI3\naI4\naI5\nat."
+        >>> dumps(copy(t))
+        "((dp1\nI1\nI1\nsI2\nI4\nsI3\nI6\nsI4\nI8\nsI5\nI10\nsS'Hello World'\n(I1\nI2\nI3\nI4\nI5\nt(lp2\nI1\naI2\naI3\naI4\naI5\natp3\n."
 
         """
         for value in self.testing_data:
