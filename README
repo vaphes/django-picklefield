@@ -114,6 +114,12 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+Changes in version 0.2.0
+========================
+
+ * Allow pickling of subclasses of django.db.models.Model (thanks to Simon
+   Charette)
+
 Changes in version 0.1.9
 ========================
 
