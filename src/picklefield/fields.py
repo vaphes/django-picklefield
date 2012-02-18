@@ -3,13 +3,45 @@
 from copy import deepcopy
 from base64 import b64encode, b64decode
 from zlib import compress, decompress
+import pickletools
 try:
     from cPickle import loads, dumps
 except ImportError:
     from pickle import loads, dumps
 
+try:
+    from pickletools import optimize
+except ImportError:
+    # python2.5 does not provide pickletools.optimize
+    from pickletools import genops
+    def optimize(p):
+        'Optimize a pickle string by removing unused PUT opcodes'
+        gets = set()            # set of args used by a GET opcode
+        puts = []               # (arg, startpos, stoppos) for the PUT opcodes
+        prevpos = None          # set to pos if previous opcode was a PUT
+        for opcode, arg, pos in genops(p):
+            if prevpos is not None:
+                puts.append((prevarg, prevpos, pos))
+                prevpos = None
+            if 'PUT' in opcode.name:
+                prevarg, prevpos = arg, pos
+            elif 'GET' in opcode.name:
+                gets.add(arg)
+
+        # Copy the pickle string except for PUTS without a corresponding GET
+        s = []
+        i = 0
+        for arg, start, stop in puts:
+            j = stop if (arg in gets) else start
+            s.append(p[i:j])
+            i = stop
+        s.append(p[i:])
+        return ''.join(s)
+
 from django.db import models
 from django.utils.encoding import force_unicode
+
+
 
 from picklefield import DEFAULT_PROTOCOL
 
@@ -46,16 +78,16 @@ def wrap_conflictual_object(obj):
     return obj
 
 def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL):
-    # We use deepcopy() here to avoid a problem with cPickle, where dumps
+    # We use pickletools.optimize() here to avoid a problem with cPickle, where dumps
     # can generate different character streams for same lookup value if
     # they are referenced differently.
     # The reason this is important is because we do all of our lookups as
     # simple string matches, thus the character streams must be the same
     # for the lookups to work properly. See tests.py for more information.
     if not compress_object:
-        value = b64encode(dumps(deepcopy(value), pickle_protocol))
+        value = b64encode(optimize(dumps(value, pickle_protocol)))
     else:
-        value = b64encode(compress(dumps(deepcopy(value), pickle_protocol)))
+        value = b64encode(compress(optimize(dumps(value, pickle_protocol))))
     return PickledObject(value)
 
 
@@ -182,3 +214,7 @@ except ImportError:
     pass
 else:
     add_introspection_rules([], [r"^picklefield\.fields\.PickledObjectField"])
+
+
+
+#######################################################################
