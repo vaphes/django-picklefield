@@ -27,7 +27,7 @@ DESC=codecs.open('README', encoding='utf-8').read()
 
 
 setup(name='django-picklefield',
-    version='0.2.0',
+    version='0.3.0',
     description='Pickled object field for Django',
     long_description=DESC,
     author='Gintautas Miliauskas',
@@ -39,7 +39,7 @@ setup(name='django-picklefield',
         'six',
     ],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

@@ -114,6 +114,11 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+Changes in version 0.3.0
+========================
+
+ * Python 3 support (thanks to Rafal Stozek).
+
 Changes in version 0.2.0
 ========================
 
