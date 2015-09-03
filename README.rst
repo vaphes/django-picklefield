@@ -1,3 +1,9 @@
+.. image:: https://travis-ci.org/gintas/django-picklefield.svg?branch=master
+    :target: https://travis-ci.org/gintas/django-picklefield
+
+.. image:: https://coveralls.io/repos/gintas/django-picklefield/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/gintas/django-picklefield?branch=master
+
 -----
 About
 -----
