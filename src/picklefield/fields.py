@@ -3,8 +3,10 @@ from copy import deepcopy
 from base64 import b64encode, b64decode
 from zlib import compress, decompress
 
+from django.utils.encoding import force_text
+
 from picklefield import DEFAULT_PROTOCOL
-from picklefield.compat import force_text, loads, dumps, _PickledObjectField
+from picklefield.compat import loads, dumps, _PickledObjectField
 
 
 class PickledObject(str):

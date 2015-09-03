@@ -2,12 +2,6 @@ import django
 from django.db import models
 from django.utils import six
 
-# django 1.5 introduces force_text instead of force_unicode
-try:
-    from django.utils.encoding import force_text
-except ImportError:
-    from django.utils.encoding import force_unicode as force_text
-
 # python 3.x does not have cPickle module
 try:
     from cPickle import loads, dumps # cpython 2.x
