@@ -19,3 +19,5 @@ INSTALLED_APPS = [
     ]
 
 SECRET_KEY = 'local'
+
+SILENCED_SYSTEM_CHECKS = ['1_7.W001']
