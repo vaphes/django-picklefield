@@ -5,13 +5,13 @@ About
 **django-picklefield** provides an implementation of a pickled object field.
 Such fields can contain any picklable objects.
 
-The implementation is taken and adopted from Django snippet #1694
-<http://www.djangosnippets.org/snippets/1694/> by Taavi Taijala, which is in
-turn based on Django snippet #513 <http://www.djangosnippets.org/snippets/513/>
-by Oliver Beattie.
+The implementation is taken and adopted from `Django snippet #1694`_ by Taavi
+Taijala, which is in turn based on `Django snippet #513`_  by Oliver Beattie.
 
 django-picklefield is available under the MIT license.
 
+.. _Django snippet #1694: http://www.djangosnippets.org/snippets/1694/
+.. _Django snippet #513: http://www.djangosnippets.org/snippets/513/
 
 -----
 Usage
@@ -135,74 +135,74 @@ Changes in version 0.3.2
 Changes in version 0.3.1
 ========================
 
- * Favor the built in json module (thanks to Simon Charette).
+* Favor the built in json module (thanks to Simon Charette).
 
 Changes in version 0.3.0
 ========================
 
- * Python 3 support (thanks to Rafal Stozek).
+* Python 3 support (thanks to Rafal Stozek).
 
 Changes in version 0.2.0
 ========================
 
- * Allow pickling of subclasses of django.db.models.Model (thanks to Simon
-   Charette).
+* Allow pickling of subclasses of django.db.models.Model (thanks to Simon
+  Charette).
 
 Changes in version 0.1.9
 ========================
 
- * Added `connection` and `prepared` parameters to `get_db_prep_value()` too
-   (thanks to Matthew Schinckel).
+* Added `connection` and `prepared` parameters to `get_db_prep_value()` too
+  (thanks to Matthew Schinckel).
 
 Changes in version 0.1.8
 ========================
 
- * Updated link to code repository.
+* Updated link to code repository.
 
 Changes in version 0.1.7
 ========================
 
- * Added `connection` and `prepared` parameters to `get_db_prep_lookup()` to
-   get rid of deprecation warnings in Django 1.2.
+* Added `connection` and `prepared` parameters to `get_db_prep_lookup()` to
+  get rid of deprecation warnings in Django 1.2.
 
 Changes in version 0.1.6
 ========================
 
- * Fixed South support (thanks aehlke@github).
+* Fixed South support (thanks aehlke@github).
 
 Changes in version 0.1.5
 ========================
 
- * Added support for South.
- * Changed default to null=False, as is common throughout Django.
+* Added support for South.
+* Changed default to null=False, as is common throughout Django.
 
 Changes in version 0.1.4
 ========================
 
- * Updated copyright statements.
+* Updated copyright statements.
 
 Changes in version 0.1.3
 ========================
 
- * Updated serialization tests (thanks to Michael Fladischer).
+* Updated serialization tests (thanks to Michael Fladischer).
 
 Changes in version 0.1.2
 ========================
 
- * Added Simplified BSD licence.
+* Added Simplified BSD licence.
 
 Changes in version 0.1.1
 ========================
 
- * Added test for serialization.
- * Added note about JSON serialization for browser.
- * Added support for different pickle protocol versions (thanks to Michael
-   Fladischer).
+* Added test for serialization.
+* Added note about JSON serialization for browser.
+* Added support for different pickle protocol versions (thanks to Michael
+  Fladischer).
 
 Changes in version 0.1
 ======================
 
- * First public release.
+* First public release.
 
 
 --------
