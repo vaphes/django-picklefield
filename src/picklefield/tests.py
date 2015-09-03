@@ -42,8 +42,7 @@ class PickledObjectFieldTests(TestCase):
         the database, whether compression is enabled or not.
         """
         for value in self.testing_data:
-            model_test = TestingModel(pickle_field=value,
-                compressed_pickle_field=value)
+            model_test = TestingModel(pickle_field=value, compressed_pickle_field=value)
             model_test.save()
             model_test = TestingModel.objects.get(id__exact=model_test.id)
             # Make sure that both the compressed and uncompressed fields return
@@ -59,8 +58,7 @@ class PickledObjectFieldTests(TestCase):
         model_test = TestingModel()
         model_test.save()
         model_test = TestingModel.objects.get(id__exact=model_test.id)
-        self.assertEqual((D1, S1, T1, L1),
-            model_test.default_pickle_field)
+        self.assertEqual((D1, S1, T1, L1), model_test.default_pickle_field)
 
     def testLookups(self):
         """
@@ -116,7 +114,7 @@ class PickledObjectFieldTests(TestCase):
         >>> dumps(copy(t))
         "((dp1\nI1\nI1\nsI2\nI4\nsI3\nI6\nsI4\nI8\nsI5\nI10\nsS'Hello World'\n(I1\nI2\nI3\nI4\nI5\nt(lp2\nI1\naI2\naI3\naI4\naI5\natp3\n."
 
-        """
+        """  # noqa
         for value in self.testing_data:
             model_test = TestingModel(pickle_field=value, compressed_pickle_field=value)
             model_test.save()
@@ -147,8 +145,8 @@ class PickledObjectFieldTests(TestCase):
         self.assertEqual(value, model_test.pickle_field)
         # Test lookup using direct input of a matching value.
         model_test = TestingModel.objects.get(
-            pickle_field__exact = (D1, S1, T1, L1),
-            compressed_pickle_field__exact = (D1, S1, T1, L1),
+            pickle_field__exact=(D1, S1, T1, L1),
+            compressed_pickle_field__exact=(D1, S1, T1, L1),
         )
         self.assertEqual(value, model_test.pickle_field)
         model_test.delete()
@@ -162,10 +160,11 @@ class PickledObjectFieldTests(TestCase):
         # is different (but compatible with python 2)
         p = dbsafe_encode({'foo': 'bar'})
 
-        self.assertEqual(data,
-            [{'pk': 1, 'model': 'picklefield.minimaltestingmodel',
-              'fields': {"pickle_field": p}}])
+        self.assertEqual(data, [{
+            'pk': 1,
+            'model': 'picklefield.minimaltestingmodel',
+            'fields': {"pickle_field": p}},
+        ])
 
         for deserialized_test in serializers.deserialize('json', serialized):
-            self.assertEqual(deserialized_test.object,
-                              model)
+            self.assertEqual(deserialized_test.object, model)

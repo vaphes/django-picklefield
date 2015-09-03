@@ -25,10 +25,10 @@ class PickledObject(str):
 
 class _ObjectWrapper(object):
     """
-    A class used to wrap object that have properties that may clash with the 
+    A class used to wrap object that have properties that may clash with the
     ORM internals.
-    
-    For example, objects with the `prepare_database_save` property such as 
+
+    For example, objects with the `prepare_database_save` property such as
     `django.db.Model` subclasses won't work under certain conditions and the
     same apply for trying to retrieve any `callable` object.
     """
@@ -54,12 +54,12 @@ def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL
     value = dumps(deepcopy(value), protocol=pickle_protocol)
     if compress_object:
         value = compress(value)
-    value = b64encode(value).decode() # decode bytes to str
+    value = b64encode(value).decode()  # decode bytes to str
     return PickledObject(value)
 
 
 def dbsafe_decode(value, compress_object=False):
-    value = value.encode() # encode str to bytes
+    value = value.encode()  # encode str to bytes
     value = b64decode(value)
     if compress_object:
         value = decompress(value)

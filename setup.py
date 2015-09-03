@@ -22,19 +22,18 @@
 import codecs
 from setuptools import setup, find_packages
 
+long_description = codecs.open('README.rst', encoding='utf-8').read()
 
-DESC=codecs.open('README.rst', encoding='utf-8').read()
-
-
-setup(name='django-picklefield',
+setup(
+    name='django-picklefield',
     version='0.3.2',
     description='Pickled object field for Django',
-    long_description=DESC,
+    long_description=long_description,
     author='Gintautas Miliauskas',
     author_email='gintautas@miliauskas.lt',
     url='http://github.com/gintas/django-picklefield',
     packages=find_packages('src'),
-    package_dir={'' : 'src'},
+    package_dir={'': 'src'},
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
