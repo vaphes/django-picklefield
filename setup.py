@@ -23,7 +23,7 @@ import codecs
 from setuptools import setup, find_packages
 
 
-DESC=codecs.open('README', encoding='utf-8').read()
+DESC=codecs.open('README.rst', encoding='utf-8').read()
 
 
 setup(name='django-picklefield',
