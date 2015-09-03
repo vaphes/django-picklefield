@@ -3,7 +3,6 @@ from copy import deepcopy
 from base64 import b64encode, b64decode
 from zlib import compress, decompress
 import six
-import django
 from django.db import models
 
 from picklefield import DEFAULT_PROTOCOL
@@ -67,16 +66,7 @@ def dbsafe_decode(value, compress_object=False):
     return loads(value)
 
 
-def _get_subfield_superclass():
-    # hardcore trick to support django < 1.3 - there was something wrong with
-    # inheritance and SubfieldBase before django 1.3
-    # see https://github.com/django/django/commit/222c73261650201f5ce99e8dd4b1ce0d30a69eb4
-    if django.VERSION < (1,3):
-        return models.Field
-    return six.with_metaclass(models.SubfieldBase, models.Field)
-
-
-class PickledObjectField(_get_subfield_superclass()):
+class PickledObjectField(six.with_metaclass(models.SubfieldBase, models.Field)):
     """
     A field that will accept *any* python object and store it in the
     database. PickledObjectField will optionally compress its values if
@@ -86,7 +76,6 @@ class PickledObjectField(_get_subfield_superclass()):
     can still do lookups using None). This way, it is still possible to
     use the ``isnull`` lookup type correctly.
     """
-    __metaclass__ = models.SubfieldBase  # for django < 1.3
 
     def __init__(self, *args, **kwargs):
         self.compress = kwargs.pop('compress', False)
