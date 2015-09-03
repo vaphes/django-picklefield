@@ -154,7 +154,7 @@ class PickledObjectFieldTests(TestCase):
         model_test.delete()
 
     def testSerialization(self):
-        model = MinimalTestingModel(pickle_field={'foo': 'bar'})
+        model = MinimalTestingModel(pk=1, pickle_field={'foo': 'bar'})
         serialized = serializers.serialize('json', [model])
         data = json.loads(serialized)
 
@@ -163,7 +163,7 @@ class PickledObjectFieldTests(TestCase):
         p = dbsafe_encode({'foo': 'bar'})
 
         self.assertEquals(data,
-            [{'pk': None, 'model': 'picklefield.minimaltestingmodel',
+            [{'pk': 1, 'model': 'picklefield.minimaltestingmodel',
               'fields': {"pickle_field": p}}])
 
         for deserialized_test in serializers.deserialize('json', serialized):
