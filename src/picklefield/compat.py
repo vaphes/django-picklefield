@@ -1,3 +1,5 @@
+from django.db import models
+
 # django 1.5 introduces force_text instead of force_unicode
 try:
     from django.utils.encoding import force_text
@@ -15,4 +17,12 @@ try:
     import json
 except ImportError:
     from django.utils import simplejson as json
-    
+
+# django 1.4 doesn't ship with six
+try:
+    from django.utils import six
+except ImportError:
+    class _PickledObjectField(models.Field):
+        __metaclass__ = models.SubfieldBase
+else:
+    _PickledObjectField = six.with_metaclass(models.SubfieldBase, models.Field)

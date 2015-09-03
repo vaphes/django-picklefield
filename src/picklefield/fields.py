@@ -2,11 +2,9 @@
 from copy import deepcopy
 from base64 import b64encode, b64decode
 from zlib import compress, decompress
-import six
-from django.db import models
 
 from picklefield import DEFAULT_PROTOCOL
-from picklefield.compat import force_text, loads, dumps
+from picklefield.compat import force_text, loads, dumps, _PickledObjectField
 
 
 class PickledObject(str):
@@ -66,7 +64,7 @@ def dbsafe_decode(value, compress_object=False):
     return loads(value)
 
 
-class PickledObjectField(six.with_metaclass(models.SubfieldBase, models.Field)):
+class PickledObjectField(_PickledObjectField):
     """
     A field that will accept *any* python object and store it in the
     database. PickledObjectField will optionally compress its values if
