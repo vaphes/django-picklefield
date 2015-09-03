@@ -127,6 +127,9 @@ class PickledObjectField(_PickledObjectField):
         value = super(PickledObjectField, self).pre_save(model_instance, add)
         return wrap_conflictual_object(value)
 
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
+
     def get_db_prep_value(self, value, connection=None, prepared=False):
         """
         Pickle and b64encode the object, optionally compressing it.
