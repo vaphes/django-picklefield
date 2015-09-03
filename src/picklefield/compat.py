@@ -13,12 +13,6 @@ try:
 except ImportError:
     from pickle import loads, dumps # cpython 3.x, other interpreters
 
-# django 1.6 will deprecate django.utils.simple_json
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
-
 if django.VERSION >= (1, 8):
     _PickledObjectField = models.Field
 else:

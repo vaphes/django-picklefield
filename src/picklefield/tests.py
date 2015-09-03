@@ -1,9 +1,9 @@
 """Unit tests for django-picklefield."""
+import json
 
 from django.test import TestCase
 from django.db import models
 from django.core import serializers
-from picklefield.compat import json
 from picklefield.fields import (PickledObjectField, wrap_conflictual_object,
                                 dbsafe_encode)
 
