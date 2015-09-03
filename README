@@ -44,6 +44,17 @@ base64-encoded pickles, which allows reliable deserialization, but such a
 format is not convenient for parsing in the browser.  By overriding
 ``value_to_string()`` you can choose a more convenient serialization format.
 
+-------------
+Running tests
+-------------
+
+The full test suite can be run with `Tox`_::
+
+    >>> pip install tox
+    >>> tox
+
+.. _Tox: https://testrun.org/tox/latest/
+
 --------------
 Original notes
 --------------
