@@ -27,7 +27,7 @@ DESC=codecs.open('README.rst', encoding='utf-8').read()
 
 
 setup(name='django-picklefield',
-    version='0.3.1',
+    version='0.3.2',
     description='Pickled object field for Django',
     long_description=DESC,
     author='Gintautas Miliauskas',
@@ -45,5 +45,6 @@ setup(name='django-picklefield',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ]
 )
