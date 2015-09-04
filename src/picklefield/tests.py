@@ -1,12 +1,11 @@
 """Unit tests for django-picklefield."""
 import json
 
-from django.test import TestCase
-from django.db import models
 from django.core import serializers
-from picklefield.fields import (PickledObjectField, wrap_conflictual_object,
-                                dbsafe_encode)
+from django.db import models
+from django.test import TestCase
 
+from .fields import PickledObjectField, dbsafe_encode, wrap_conflictual_object
 
 S1 = 'Hello World'
 T1 = (1, 2, 3, 4, 5)
