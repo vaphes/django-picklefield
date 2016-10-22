@@ -160,15 +160,13 @@ class PickledObjectField(_PickledObjectField):
     def get_internal_type(self):
         return 'TextField'
 
-    def get_db_prep_lookup(self, lookup_type, value, connection=None, prepared=False):
-        if lookup_type not in ['exact', 'in', 'isnull']:
-            raise TypeError('Lookup type %s is not supported.' % lookup_type)
-        # The Field model already calls get_db_prep_value before doing the
-        # actual lookup, so all we need to do is limit the lookup types.
-        return super(PickledObjectField, self).get_db_prep_lookup(
-            lookup_type, value, connection=connection, prepared=prepared
-        )
-
+    def get_lookup(self, lookup_name):
+        """
+        We need to limit the lookup types.
+        """
+        if lookup_name not in ['exact', 'in', 'isnull']:
+            raise TypeError('Lookup type %s is not supported.' % lookup_name)
+        return super(PickledObjectField, self).get_lookup(lookup_name)
 
 # South support; see http://south.aeracode.org/docs/tutorial/part4.html#simple-inheritance
 try:
