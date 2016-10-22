@@ -1,6 +1,8 @@
 """Unit tests for django-picklefield."""
 import json
+from unittest import skipIf
 
+import django
 from django.core import serializers
 from django.db import models
 from django.test import TestCase
@@ -149,6 +151,14 @@ class PickledObjectFieldTests(TestCase):
         )
         self.assertEqual(value, model_test.pickle_field)
         model_test.delete()
+
+    @skipIf(django.VERSION[:2] < (1, 5), 'Skip for older Django versions')
+    def testLimitLookupsType(self):
+        """
+        Test that picklefield supports lookup type limit
+        """
+        with self.assertRaisesMessage(TypeError, 'Lookup type gte is not supported'):
+            TestingModel.objects.filter(pickle_field__gte=1)
 
     def testSerialization(self):
         model = MinimalTestingModel(pk=1, pickle_field={'foo': 'bar'})
