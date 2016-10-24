@@ -1,5 +1,6 @@
 """Unit tests for django-picklefield."""
 import json
+from datetime import date
 from unittest import skipIf
 
 import django
@@ -20,6 +21,7 @@ class TestingModel(models.Model):
     pickle_field = PickledObjectField()
     compressed_pickle_field = PickledObjectField(compress=True)
     default_pickle_field = PickledObjectField(default=(D1, S1, T1, L1))
+    callable_pickle_field = PickledObjectField(default=date.today)
 
 
 class MinimalTestingModel(models.Model):
@@ -60,6 +62,7 @@ class PickledObjectFieldTests(TestCase):
         model_test.save()
         model_test = TestingModel.objects.get(id__exact=model_test.id)
         self.assertEqual((D1, S1, T1, L1), model_test.default_pickle_field)
+        self.assertEqual(date.today(), model_test.callable_pickle_field)
 
     def testLookups(self):
         """
