@@ -141,6 +141,10 @@ Changes in version 0.3.3
 ========================
 
 * Added a new option to prevent a copy of the object before pickling: `copy=True`
+* Dropped support for Django 1.4
+* Dropped support for Django 1.7
+* Dropped support for Python 3.2
+* Added support for Python 3.6
 
 Changes in version 0.3.2
 ========================

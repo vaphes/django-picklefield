@@ -172,12 +172,3 @@ class PickledObjectField(_PickledObjectField):
         if lookup_name not in ['exact', 'in', 'isnull']:
             raise TypeError('Lookup type %s is not supported.' % lookup_name)
         return super(PickledObjectField, self).get_lookup(lookup_name)
-
-
-# South support; see http://south.aeracode.org/docs/tutorial/part4.html#simple-inheritance
-try:
-    from south.modelsinspector import add_introspection_rules
-except ImportError:
-    pass
-else:
-    add_introspection_rules([], [r"^picklefield\.fields\.PickledObjectField"])
