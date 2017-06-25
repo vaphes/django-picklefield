@@ -44,14 +44,18 @@ def wrap_conflictual_object(obj):
     return obj
 
 
-def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL):
+def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL, copy=True):
     # We use deepcopy() here to avoid a problem with cPickle, where dumps
     # can generate different character streams for same lookup value if
     # they are referenced differently.
     # The reason this is important is because we do all of our lookups as
     # simple string matches, thus the character streams must be the same
     # for the lookups to work properly. See tests.py for more information.
-    value = dumps(deepcopy(value), protocol=pickle_protocol)
+    if copy:
+        # Copy can be very expensive if users aren't going to perform lookups
+        # on the value anyway.
+        value = deepcopy(value)
+    value = dumps(value, protocol=pickle_protocol)
     if compress_object:
         value = compress(value)
     value = b64encode(value).decode()  # decode bytes to str
@@ -80,6 +84,7 @@ class PickledObjectField(_PickledObjectField):
     def __init__(self, *args, **kwargs):
         self.compress = kwargs.pop('compress', False)
         self.protocol = kwargs.pop('protocol', DEFAULT_PROTOCOL)
+        self.copy = kwargs.pop('copy', True)
         kwargs.setdefault('editable', False)
         super(PickledObjectField, self).__init__(*args, **kwargs)
 
@@ -150,7 +155,7 @@ class PickledObjectField(_PickledObjectField):
             # marshaller (telling it to store it like it would a string), but
             # since both of these methods result in the same value being stored,
             # doing things this way is much easier.
-            value = force_text(dbsafe_encode(value, self.compress, self.protocol))
+            value = force_text(dbsafe_encode(value, self.compress, self.protocol, self.copy))
         return value
 
     def value_to_string(self, obj):
@@ -167,6 +172,7 @@ class PickledObjectField(_PickledObjectField):
         if lookup_name not in ['exact', 'in', 'isnull']:
             raise TypeError('Lookup type %s is not supported.' % lookup_name)
         return super(PickledObjectField, self).get_lookup(lookup_name)
+
 
 # South support; see http://south.aeracode.org/docs/tutorial/part4.html#simple-inheritance
 try:
