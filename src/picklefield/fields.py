@@ -3,10 +3,11 @@ from base64 import b64decode, b64encode
 from copy import deepcopy
 from zlib import compress, decompress
 
+from django.db import models
 from django.utils.encoding import force_text
 
 from . import DEFAULT_PROTOCOL
-from .compat import _PickledObjectField, dumps, loads
+from .compat import dumps, loads
 
 
 class PickledObject(str):
@@ -70,7 +71,7 @@ def dbsafe_decode(value, compress_object=False):
     return loads(value)
 
 
-class PickledObjectField(_PickledObjectField):
+class PickledObjectField(models.Field):
     """
     A field that will accept *any* python object and store it in the
     database. PickledObjectField will optionally compress its values if
