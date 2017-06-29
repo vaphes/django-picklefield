@@ -17,11 +17,17 @@ D1 = {1: 1, 2: 4, 3: 6, 4: 8, 5: 10}
 D2 = {1: 2, 2: 4, 3: 6, 4: 8, 5: 10}
 
 
+class TestCopyDataType(str):
+    def __deepcopy__(self, memo):
+        raise ValueError('Please dont copy me')
+
+
 class TestingModel(models.Model):
     pickle_field = PickledObjectField()
     compressed_pickle_field = PickledObjectField(compress=True)
     default_pickle_field = PickledObjectField(default=(D1, S1, T1, L1))
     callable_pickle_field = PickledObjectField(default=date.today)
+    non_copying_field = PickledObjectField(copy=False, default=TestCopyDataType('boom!'))
 
 
 class MinimalTestingModel(models.Model):
@@ -180,3 +186,17 @@ class PickledObjectFieldTests(TestCase):
 
         for deserialized_test in serializers.deserialize('json', serialized):
             self.assertEqual(deserialized_test.object, model)
+
+    def testNoCopy(self):
+        TestingModel.objects.create(
+            pickle_field='Copy Me',
+            compressed_pickle_field='Copy Me',
+            non_copying_field=TestCopyDataType('Dont Copy Me')
+        )
+
+        with self.assertRaises(ValueError):
+            TestingModel.objects.create(
+                pickle_field=TestCopyDataType('BOOM!'),
+                compressed_pickle_field='Copy Me',
+                non_copying_field='Dont copy me'
+            )

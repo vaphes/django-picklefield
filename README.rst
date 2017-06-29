@@ -50,6 +50,12 @@ base64-encoded pickles, which allows reliable deserialization, but such a
 format is not convenient for parsing in the browser.  By overriding
 ``value_to_string()`` you can choose a more convenient serialization format.
 
+Fields now accept the boolean key word argument `copy`, which defaults to
+`True`. The `copy` is necessary for lookups to work correctly. If you don't
+care about performing lookups on the picklefield, you can set `copy=False` to
+save on some memory usage. This an be especially beneficial for very large
+object trees.
+
 -------------
 Running tests
 -------------
@@ -130,6 +136,15 @@ since it is never a good idea to have a PickledObjectField be user editable.
 -------
 Changes
 -------
+
+Changes in version 0.3.3
+========================
+
+* Added a new option to prevent a copy of the object before pickling: `copy=True`
+* Dropped support for Django 1.4
+* Dropped support for Django 1.7
+* Dropped support for Python 3.2
+* Added support for Python 3.6
 
 Changes in version 0.3.2
 ========================
