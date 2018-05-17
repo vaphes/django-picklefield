@@ -87,6 +87,7 @@ class PickledObjectField(models.Field):
     can still do lookups using None). This way, it is still possible to
     use the ``isnull`` lookup type correctly.
     """
+    empty_strings_allowed = False
 
     def __init__(self, *args, **kwargs):
         self.compress = kwargs.pop('compress', False)

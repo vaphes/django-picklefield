@@ -168,6 +168,10 @@ Changes in version 2.0.0
 * Silenced ``RemovedInDjango30Warning`` warnings on Django 2.0+ (thanks to
   canarduck).
 * Restructured project directories.
+* Disallowed the usage of empty strings for ``PickledObjectField``. That makes
+  ``.save()``, ``.create()``, etc. raise ``IntegrityError`` if `null` is not
+  ``True`` and no default value was specified like built-in fields do
+  (thanks to Attila-Mihaly Balazs).
 
 Changes in version 1.1.0
 ========================

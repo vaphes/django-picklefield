@@ -2,6 +2,7 @@ import json
 from datetime import date
 
 from django.core import serializers
+from django.db import IntegrityError
 from django.test import TestCase
 from picklefield.fields import dbsafe_encode, wrap_conflictual_object
 
@@ -37,7 +38,7 @@ class PickledObjectFieldTests(TestCase):
 
         # Make sure the default value for default_pickled_field gets stored
         # correctly and that it isn't converted to a string.
-        model_test = TestingModel()
+        model_test = TestingModel(pickle_field=1, compressed_pickle_field=1)
         model_test.save()
         model_test = TestingModel.objects.get(id__exact=model_test.id)
         self.assertEqual((D1, S1, T1, L1), model_test.default_pickle_field)
@@ -172,3 +173,7 @@ class PickledObjectFieldTests(TestCase):
                 compressed_pickle_field='Copy Me',
                 non_copying_field='Dont copy me'
             )
+
+    def test_empty_strings_not_allowed(self):
+        with self.assertRaises(IntegrityError):
+            MinimalTestingModel.objects.create()
