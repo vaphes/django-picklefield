@@ -49,11 +49,15 @@ convenience, recent versions should be available from PyPI.
 
 To use, just define a field in your model::
 
+.. code:: python
+
     >>> from picklefield.fields import PickledObjectField
     ... class SomeObject(models.Model):
     ...     args = PickledObjectField()
 
 and assign whatever you like (as long as it's picklable) to the field::
+
+.. code:: python
 
     >>> obj = SomeObject()
     >>> obj.args = ['fancy', {'objects': 'inside'}]
@@ -161,7 +165,8 @@ Changes
 Changes in version 2.0.0
 ========================
 
-* Silenced RemovedInDjango30Warning warnings on Django 2.0+.
+* Silenced ``RemovedInDjango30Warning`` warnings on Django 2.0+ (thanks to
+  canarduck).
 * Restructured project directories.
 
 Changes in version 1.1.0
