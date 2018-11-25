@@ -1,39 +1,14 @@
-"""Unit tests for django-picklefield."""
 import json
 from datetime import date
 
 from django.core import serializers
-from django.db import models
 from django.test import TestCase
+from picklefield.fields import dbsafe_encode, wrap_conflictual_object
 
-from .fields import PickledObjectField, dbsafe_encode, wrap_conflictual_object
-
-S1 = 'Hello World'
-T1 = (1, 2, 3, 4, 5)
-L1 = [1, 2, 3, 4, 5]
-D1 = {1: 1, 2: 4, 3: 6, 4: 8, 5: 10}
-D2 = {1: 2, 2: 4, 3: 6, 4: 8, 5: 10}
-
-
-class TestCopyDataType(str):
-    def __deepcopy__(self, memo):
-        raise ValueError('Please dont copy me')
-
-
-class TestingModel(models.Model):
-    pickle_field = PickledObjectField()
-    compressed_pickle_field = PickledObjectField(compress=True)
-    default_pickle_field = PickledObjectField(default=(D1, S1, T1, L1))
-    callable_pickle_field = PickledObjectField(default=date.today)
-    non_copying_field = PickledObjectField(copy=False, default=TestCopyDataType('boom!'))
-
-
-class MinimalTestingModel(models.Model):
-    pickle_field = PickledObjectField()
-
-
-class TestCustomDataType(str):
-    pass
+from .models import (
+    D1, D2, L1, S1, T1, MinimalTestingModel, TestCopyDataType,
+    TestCustomDataType, TestingModel,
+)
 
 
 class PickledObjectFieldTests(TestCase):
@@ -177,7 +152,7 @@ class PickledObjectFieldTests(TestCase):
 
         self.assertEqual(data, [{
             'pk': 1,
-            'model': 'picklefield.minimaltestingmodel',
+            'model': 'tests.minimaltestingmodel',
             'fields': {"pickle_field": p}},
         ])
 

@@ -1,3 +1,3 @@
 [run]
-source = src/picklefield
+source = picklefield
 branch = True

@@ -1,4 +1,5 @@
-"""Pickle field implementation for Django."""
+from __future__ import unicode_literals
+
 from base64 import b64decode, b64encode
 from copy import deepcopy
 from zlib import compress, decompress
@@ -7,8 +8,12 @@ import django
 from django.db import models
 from django.utils.encoding import force_text
 
-from . import DEFAULT_PROTOCOL
-from .compat import dumps, loads
+from .constants import DEFAULT_PROTOCOL
+
+try:
+    from cPickle import loads, dumps
+except ImportError:
+    from pickle import loads, dumps
 
 
 class PickledObject(str):
