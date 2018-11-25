@@ -137,6 +137,12 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+Changes in version 2.0.0
+========================
+
+* Silenced RemovedInDjango30Warning warnings on Django 2.0+.
+* Restructured project directories.
+
 Changes in version 1.1.0
 ========================
 
