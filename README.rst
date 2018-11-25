@@ -47,7 +47,7 @@ Usage
 First of all, you need to have **django-picklefield** installed; for your
 convenience, recent versions should be available from PyPI.
 
-To use, just define a field in your model::
+To use, just define a field in your model:
 
 .. code:: python
 
@@ -55,7 +55,7 @@ To use, just define a field in your model::
     ... class SomeObject(models.Model):
     ...     args = PickledObjectField()
 
-and assign whatever you like (as long as it's picklable) to the field::
+and assign whatever you like (as long as it's picklable) to the field:
 
 .. code:: python
 
