@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-from picklefield.constants import DEFAULT_PROTOCOL
-from picklefield.fields import PickledObjectField
-
 import django.utils.version
+
+from .constants import DEFAULT_PROTOCOL
+from .fields import PickledObjectField
 
 __all__ = 'VERSION', '__version__', 'DEFAULT_PROTOCOL', 'PickledObjectField'
 
