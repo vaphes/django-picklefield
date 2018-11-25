@@ -1,8 +1,29 @@
-.. image:: https://travis-ci.org/gintas/django-picklefield.svg?branch=master
-    :target: https://travis-ci.org/gintas/django-picklefield
+django-picklefield
+==================
 
-.. image:: https://coveralls.io/repos/gintas/django-picklefield/badge.svg?branch=master&service=github
-    :target: https://coveralls.io/github/gintas/django-picklefield?branch=master
+.. image:: https://img.shields.io/pypi/l/django-picklefield.svg?style=flat
+    :target: https://pypi.python.org/pypi/django-picklefield/
+    :alt: License
+
+.. image:: https://img.shields.io/pypi/v/django-picklefield.svg?style=flat
+    :target: https://pypi.python.org/pypi/django-picklefield/
+    :alt: Latest Version
+
+.. image:: https://travis-ci.org/charettes/django-picklefield.svg?branch=master
+    :target: https://travis-ci.org/charettes/django-picklefield
+    :alt: Build Status
+
+.. image:: https://coveralls.io/repos/charettes/django-picklefield/badge.svg?branch=master
+    :target: https://coveralls.io/r/charettes/django-picklefield?branch=master
+    :alt: Coverage Status
+
+.. image:: https://img.shields.io/pypi/pyversions/django-picklefield.svg?style=flat
+    :target: https://pypi.python.org/pypi/django-picklefield/
+    :alt: Supported Python Versions
+
+.. image:: https://img.shields.io/pypi/wheel/django-picklefield.svg?style=flat
+    :target: https://pypi.python.org/pypi/django-picklefield/
+    :alt: Wheel Status
 
 -----
 About
