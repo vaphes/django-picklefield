@@ -5,6 +5,7 @@ from copy import deepcopy
 from zlib import compress, decompress
 
 import django
+from django.core import checks
 from django.db import models
 from django.utils.encoding import force_text
 
@@ -114,6 +115,33 @@ class PickledObjectField(models.Field):
             return self.default
         # If the field doesn't have a default, then we punt to models.Field.
         return super(PickledObjectField, self).get_default()
+
+    def _check_default(self):
+        if self.has_default() and isinstance(self.default, (list, dict, set)):
+            return [
+                checks.Warning(
+                    "%s default should be a callable instead of a mutable instance so "
+                    "that it's not shared between all field instances." % (
+                        self.__class__.__name__,
+                    ),
+                    hint=(
+                        'Use a callable instead, e.g., use `%s` instead of '
+                        '`%r`.' % (
+                            type(self.default).__name__,
+                            self.default,
+                        )
+                    ),
+                    obj=self,
+                    id='picklefield.E001',
+                )
+            ]
+        else:
+            return []
+
+    def check(self, **kwargs):
+        errors = super(PickledObjectField, self).check(**kwargs)
+        errors.extend(self._check_default())
+        return errors
 
     def to_python(self, value):
         """

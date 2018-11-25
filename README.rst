@@ -172,6 +172,7 @@ Changes in version 2.0.0
   ``.save()``, ``.create()``, etc. raise ``IntegrityError`` if `null` is not
   ``True`` and no default value was specified like built-in fields do
   (thanks to Attila-Mihaly Balazs).
+* Added a check for mutable default values to ``PickledObjectField``.
 
 Changes in version 1.1.0
 ========================

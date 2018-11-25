@@ -1,10 +1,13 @@
 import json
 from datetime import date
 
-from django.core import serializers
-from django.db import IntegrityError
-from django.test import TestCase
-from picklefield.fields import dbsafe_encode, wrap_conflictual_object
+from django.core import checks, serializers
+from django.db import IntegrityError, models
+from django.test import SimpleTestCase, TestCase
+from django.test.utils import isolate_apps
+from picklefield.fields import (
+    PickledObjectField, dbsafe_encode, wrap_conflictual_object,
+)
 
 from .models import (
     D1, D2, L1, S1, T1, MinimalTestingModel, TestCopyDataType,
@@ -177,3 +180,46 @@ class PickledObjectFieldTests(TestCase):
     def test_empty_strings_not_allowed(self):
         with self.assertRaises(IntegrityError):
             MinimalTestingModel.objects.create()
+
+
+@isolate_apps('tests')
+class PickledObjectFieldCheckTests(SimpleTestCase):
+    def test_mutable_default_check(self):
+        class Model(models.Model):
+            list_field = PickledObjectField(default=[])
+            dict_field = PickledObjectField(default={})
+            set_field = PickledObjectField(default=set())
+
+        msg = (
+            "PickledObjectField default should be a callable instead of a mutable instance so "
+            "that it's not shared between all field instances."
+        )
+
+        self.assertEqual(Model().check(), [
+            checks.Warning(
+                msg=msg,
+                hint='Use a callable instead, e.g., use `list` instead of `[]`.',
+                obj=Model._meta.get_field('list_field'),
+                id='picklefield.E001',
+            ),
+            checks.Warning(
+                msg=msg,
+                hint='Use a callable instead, e.g., use `dict` instead of `{}`.',
+                obj=Model._meta.get_field('dict_field'),
+                id='picklefield.E001',
+            ),
+            checks.Warning(
+                msg=msg,
+                hint='Use a callable instead, e.g., use `set` instead of `%s`.' % repr(set()),
+                obj=Model._meta.get_field('set_field'),
+                id='picklefield.E001',
+            )
+        ])
+
+    def test_non_mutable_default_check(self):
+        class Model(models.Model):
+            list_field = PickledObjectField(default=list)
+            dict_field = PickledObjectField(default=dict)
+            set_field = PickledObjectField(default=set)
+
+        self.assertEqual(Model().check(), [])
