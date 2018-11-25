@@ -18,7 +18,7 @@ class PickledObjectFieldTests(TestCase):
                              MinimalTestingModel)
         return super(PickledObjectFieldTests, self).setUp()
 
-    def testDataIntegrity(self):
+    def test_data_integrity(self):
         """
         Tests that data remains the same when saved to and fetched from
         the database, whether compression is enabled or not.
@@ -43,7 +43,7 @@ class PickledObjectFieldTests(TestCase):
         self.assertEqual((D1, S1, T1, L1), model_test.default_pickle_field)
         self.assertEqual(date.today(), model_test.callable_pickle_field)
 
-    def testLookups(self):
+    def test_lookups(self):
         """
         Tests that lookups can be performed on data once stored in the
         database, whether compression is enabled or not.
@@ -134,14 +134,14 @@ class PickledObjectFieldTests(TestCase):
         self.assertEqual(value, model_test.pickle_field)
         model_test.delete()
 
-    def testLimitLookupsType(self):
+    def test_limit_lookups_type(self):
         """
         Test that picklefield supports lookup type limit
         """
         with self.assertRaisesMessage(TypeError, 'Lookup type gte is not supported'):
             TestingModel.objects.filter(pickle_field__gte=1)
 
-    def testSerialization(self):
+    def test_serialization(self):
         model = MinimalTestingModel(pk=1, pickle_field={'foo': 'bar'})
         serialized = serializers.serialize('json', [model])
         data = json.loads(serialized)
@@ -159,7 +159,7 @@ class PickledObjectFieldTests(TestCase):
         for deserialized_test in serializers.deserialize('json', serialized):
             self.assertEqual(deserialized_test.object, model)
 
-    def testNoCopy(self):
+    def test_no_copy(self):
         TestingModel.objects.create(
             pickle_field='Copy Me',
             compressed_pickle_field='Copy Me',
