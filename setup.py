@@ -1,3 +1,4 @@
+# Copyright (c) 2011-2018 Simon Charette
 # Copyright (c) 2009-2010 Gintautas Miliauskas
 # Copyright (c) 2009, Taavi Taijala
 # Copyright (c) 2007, Oliver Beattie
@@ -29,11 +30,10 @@ setup(
     version='1.1.0',
     description='Pickled object field for Django',
     long_description=long_description,
-    author='Gintautas Miliauskas',
-    author_email='gintautas@miliauskas.lt',
+    author='Simon Charette',
+    author_email='charette.s+django-picklefiel@gmail.com',
     url='http://github.com/gintas/django-picklefield',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
