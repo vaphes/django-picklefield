@@ -4,7 +4,7 @@ from base64 import b64decode, b64encode
 from copy import deepcopy
 from zlib import compress, decompress
 
-import django
+from django import VERSION as DJANGO_VERSION
 from django.core import checks
 from django.db import models
 from django.utils.encoding import force_text
@@ -12,9 +12,9 @@ from django.utils.encoding import force_text
 from .constants import DEFAULT_PROTOCOL
 
 try:
-    from cPickle import loads, dumps
+    from cPickle import loads, dumps  # pragma: no cover
 except ImportError:
-    from pickle import loads, dumps
+    from pickle import loads, dumps  # pragma: no cover
 
 
 class PickledObject(str):
@@ -158,7 +158,7 @@ class PickledObjectField(models.Field):
                 value = dbsafe_decode(value, self.compress)
             except Exception:
                 # If the value is a definite pickle; and an error is raised in
-                # de-pickling it should be allowed to propogate.
+                # de-pickling it should be allowed to propagate.
                 if isinstance(value, PickledObject):
                     raise
             else:
@@ -170,12 +170,12 @@ class PickledObjectField(models.Field):
         value = super(PickledObjectField, self).pre_save(model_instance, add)
         return wrap_conflictual_object(value)
 
-    if django.VERSION < (2, 0):
-        def from_db_value(self, value, expression, connection, context):
-            return self.to_python(value)
+    if DJANGO_VERSION < (2, 0):
+        def from_db_value(self, value, expression, connection, context):  # pragma: no cover
+            return self.to_python(value)  # pragma: no cover
     else:
-        def from_db_value(self, value, expression, connection):
-            return self.to_python(value)
+        def from_db_value(self, value, expression, connection):  # pragma: no cover
+            return self.to_python(value)  # pragma: no cover
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         """

@@ -14,6 +14,11 @@ from .models import (
     TestCustomDataType, TestingModel,
 )
 
+try:
+    from unittest.mock import patch  # pragma: no cover
+except ImportError:
+    from mock import patch  # pragma: no cover
+
 
 class PickledObjectFieldTests(TestCase):
     def setUp(self):
@@ -35,6 +40,7 @@ class PickledObjectFieldTests(TestCase):
             # the same data, even thought it's stored differently in the DB.
             self.assertEqual(value, model_test.pickle_field)
             self.assertEqual(value, model_test.compressed_pickle_field)
+            self.assertIsNone(model_test.nullable_pickle_field)
             # Make sure we can also retrieve the model
             model_test.save()
             model_test.delete()
@@ -180,6 +186,21 @@ class PickledObjectFieldTests(TestCase):
     def test_empty_strings_not_allowed(self):
         with self.assertRaises(IntegrityError):
             MinimalTestingModel.objects.create()
+
+    def test_decode_error(self):
+        def mock_decode_error(*args, **kwargs):
+            raise Exception()
+
+        model = MinimalTestingModel.objects.create(pickle_field={'foo': 'bar'})
+        model.save()
+
+        self.assertEqual(
+            {'foo': 'bar'}, MinimalTestingModel.objects.get(pk=model.pk).pickle_field
+        )
+
+        with patch('picklefield.fields.dbsafe_decode', mock_decode_error):
+            encoded_value = dbsafe_encode({'foo': 'bar'})
+            self.assertEqual(encoded_value, MinimalTestingModel.objects.get(pk=model.pk).pickle_field)
 
 
 @isolate_apps('tests')
