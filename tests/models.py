@@ -27,6 +27,7 @@ class TestingModel(models.Model):
     default_pickle_field = PickledObjectField(default=(D1, S1, T1, L1))
     callable_pickle_field = PickledObjectField(default=date.today)
     non_copying_field = PickledObjectField(copy=False, default=TestCopyDataType('boom!'))
+    nullable_pickle_field = PickledObjectField(null=True)
 
 
 class MinimalTestingModel(models.Model):
