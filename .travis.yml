@@ -32,4 +32,4 @@ deploy:
   distributions: sdist bdist_wheel
   on:
     tags: true
-    condition: "$TOXENV = py27-1.11"
+    condition: "$TRAVIS_PYTHON_VERSION = 2.7"
