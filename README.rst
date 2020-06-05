@@ -162,6 +162,10 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+UNRELEASED
+==========
+
+* Dropped support for Python 2.
 Changes in version 2.1.0
 ========================
 
