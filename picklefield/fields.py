@@ -1,20 +1,14 @@
-from __future__ import unicode_literals
-
 from base64 import b64decode, b64encode
 from copy import deepcopy
+from pickle import dumps, loads
 from zlib import compress, decompress
 
-from django import VERSION as DJANGO_VERSION
+from django.conf import settings
 from django.core import checks
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from .constants import DEFAULT_PROTOCOL
-
-try:
-    from cPickle import loads, dumps  # pragma: no cover
-except ImportError:
-    from pickle import loads, dumps  # pragma: no cover
 
 
 class PickledObject(str):
@@ -52,13 +46,19 @@ def wrap_conflictual_object(obj):
     return obj
 
 
-def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL, copy=True):
+def get_default_protocol():
+    return getattr(settings, 'PICKLEFIELD_DEFAULT_PROTOCOL', DEFAULT_PROTOCOL)
+
+
+def dbsafe_encode(value, compress_object=False, pickle_protocol=None, copy=True):
     # We use deepcopy() here to avoid a problem with cPickle, where dumps
     # can generate different character streams for same lookup value if
     # they are referenced differently.
     # The reason this is important is because we do all of our lookups as
     # simple string matches, thus the character streams must be the same
     # for the lookups to work properly. See tests.py for more information.
+    if pickle_protocol is None:
+        pickle_protocol = get_default_protocol()
     if copy:
         # Copy can be very expensive if users aren't going to perform lookups
         # on the value anyway.
@@ -92,7 +92,10 @@ class PickledObjectField(models.Field):
 
     def __init__(self, *args, **kwargs):
         self.compress = kwargs.pop('compress', False)
-        self.protocol = kwargs.pop('protocol', DEFAULT_PROTOCOL)
+        protocol = kwargs.pop('protocol', None)
+        if protocol is None:
+            protocol = get_default_protocol()
+        self.protocol = protocol
         self.copy = kwargs.pop('copy', True)
         kwargs.setdefault('editable', False)
         super().__init__(*args, **kwargs)
@@ -143,6 +146,14 @@ class PickledObjectField(models.Field):
         errors.extend(self._check_default())
         return errors
 
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        if self.compress:
+            kwargs['compress'] = True
+        if self.protocol != get_default_protocol():
+            kwargs['protocol'] = self.protocol
+        return name, path, args, kwargs
+
     def to_python(self, value):
         """
         B64decode and unpickle the object, optionally decompressing it.
@@ -170,12 +181,8 @@ class PickledObjectField(models.Field):
         value = super().pre_save(model_instance, add)
         return wrap_conflictual_object(value)
 
-    if DJANGO_VERSION < (2, 0):
-        def from_db_value(self, value, expression, connection, context):  # pragma: no cover
-            return self.to_python(value)  # pragma: no cover
-    else:
-        def from_db_value(self, value, expression, connection):  # pragma: no cover
-            return self.to_python(value)  # pragma: no cover
+    def from_db_value(self, value, expression, connection):
+        return self.to_python(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         """
@@ -189,13 +196,13 @@ class PickledObjectField(models.Field):
 
         """
         if value is not None and not isinstance(value, PickledObject):
-            # We call force_text here explicitly, so that the encoded string
+            # We call force_str here explicitly, so that the encoded string
             # isn't rejected by the postgresql_psycopg2 backend. Alternatively,
             # we could have just registered PickledObject with the psycopg
             # marshaller (telling it to store it like it would a string), but
             # since both of these methods result in the same value being stored,
             # doing things this way is much easier.
-            value = force_text(dbsafe_encode(value, self.compress, self.protocol, self.copy))
+            value = force_str(dbsafe_encode(value, self.compress, self.protocol, self.copy))
         return value
 
     def value_to_string(self, obj):
