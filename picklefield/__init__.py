@@ -7,6 +7,6 @@ from .fields import PickledObjectField
 
 __all__ = 'VERSION', '__version__', 'DEFAULT_PROTOCOL', 'PickledObjectField'
 
-VERSION = (3, 0, 0, 'final', 0)
+VERSION = (3, 0, 1, 'final', 0)
 
 __version__ = django.utils.version.get_version(VERSION)
