@@ -3,7 +3,6 @@ from copy import deepcopy
 from pickle import dumps, loads
 from zlib import compress, decompress
 
-from django import VERSION as DJANGO_VERSION
 from django.core import checks
 from django.db import models
 from django.utils.encoding import force_str
@@ -164,12 +163,8 @@ class PickledObjectField(models.Field):
         value = super().pre_save(model_instance, add)
         return wrap_conflictual_object(value)
 
-    if DJANGO_VERSION < (2, 0):
-        def from_db_value(self, value, expression, connection, context):  # pragma: no cover
-            return self.to_python(value)  # pragma: no cover
-    else:
-        def from_db_value(self, value, expression, connection):  # pragma: no cover
-            return self.to_python(value)  # pragma: no cover
+    def from_db_value(self, value, expression, connection):
+        return self.to_python(value)
 
     def get_db_prep_value(self, value, connection=None, prepared=False):
         """
