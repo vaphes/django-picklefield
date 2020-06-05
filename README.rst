@@ -167,6 +167,7 @@ UNRELEASED
 
 * Dropped support for Python 2.
 * Updated default pickle protocol to version 3.
+* Dropped support for Django 1.11.
 
 Changes in version 2.1.0
 ========================
