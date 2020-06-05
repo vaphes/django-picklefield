@@ -20,7 +20,6 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.2',
         'Framework :: Django :: 3.0',
         'Intended Audience :: Developers',
@@ -39,7 +38,7 @@ setup(
     keywords=['django pickle model field'],
     packages=find_packages(exclude=['tests', 'tests.*']),
     python_requires='>=3',
-    install_requires=['Django>=1.11'],
+    install_requires=['Django>=2.2'],
     extras_require={
         'tests': ['tox'],
     },
