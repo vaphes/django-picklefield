@@ -27,8 +27,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -39,6 +38,7 @@ setup(
     ],
     keywords=['django pickle model field'],
     packages=find_packages(exclude=['tests', 'tests.*']),
+    python_requires='>=3',
     install_requires=['Django>=1.11'],
     extras_require={
         'tests': ['tox'],

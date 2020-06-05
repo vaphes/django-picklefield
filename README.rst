@@ -162,6 +162,14 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+UNRELEASED
+==========
+
+* Dropped support for Python 2.
+* Updated default pickle protocol to version 3.
+* Added testing against Django 3.0.
+* Dropped support for Django 1.11.
+
 Changes in version 2.1.0
 ========================
 

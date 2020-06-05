@@ -31,7 +31,7 @@ class PickledObject(str):
     """
 
 
-class _ObjectWrapper(object):
+class _ObjectWrapper:
     """
     A class used to wrap object that have properties that may clash with the
     ORM internals.
@@ -95,7 +95,7 @@ class PickledObjectField(models.Field):
         self.protocol = kwargs.pop('protocol', DEFAULT_PROTOCOL)
         self.copy = kwargs.pop('copy', True)
         kwargs.setdefault('editable', False)
-        super(PickledObjectField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_default(self):
         """
@@ -114,7 +114,7 @@ class PickledObjectField(models.Field):
                 return self.default()
             return self.default
         # If the field doesn't have a default, then we punt to models.Field.
-        return super(PickledObjectField, self).get_default()
+        return super().get_default()
 
     def _check_default(self):
         if self.has_default() and isinstance(self.default, (list, dict, set)):
@@ -139,7 +139,7 @@ class PickledObjectField(models.Field):
             return []
 
     def check(self, **kwargs):
-        errors = super(PickledObjectField, self).check(**kwargs)
+        errors = super().check(**kwargs)
         errors.extend(self._check_default())
         return errors
 
@@ -167,7 +167,7 @@ class PickledObjectField(models.Field):
         return value
 
     def pre_save(self, model_instance, add):
-        value = super(PickledObjectField, self).pre_save(model_instance, add)
+        value = super().pre_save(model_instance, add)
         return wrap_conflictual_object(value)
 
     if DJANGO_VERSION < (2, 0):
@@ -211,4 +211,4 @@ class PickledObjectField(models.Field):
         """
         if lookup_name not in ['exact', 'in', 'isnull']:
             raise TypeError('Lookup type %s is not supported.' % lookup_name)
-        return super(PickledObjectField, self).get_lookup(lookup_name)
+        return super().get_lookup(lookup_name)
