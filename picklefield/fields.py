@@ -3,6 +3,7 @@ from copy import deepcopy
 from pickle import dumps, loads
 from zlib import compress, decompress
 
+from django.conf import settings
 from django.core import checks
 from django.db import models
 from django.utils.encoding import force_str
@@ -45,13 +46,19 @@ def wrap_conflictual_object(obj):
     return obj
 
 
-def dbsafe_encode(value, compress_object=False, pickle_protocol=DEFAULT_PROTOCOL, copy=True):
+def get_default_protocol():
+    return getattr(settings, 'PICKLEFIELD_DEFAULT_PROTOCOL', DEFAULT_PROTOCOL)
+
+
+def dbsafe_encode(value, compress_object=False, pickle_protocol=None, copy=True):
     # We use deepcopy() here to avoid a problem with cPickle, where dumps
     # can generate different character streams for same lookup value if
     # they are referenced differently.
     # The reason this is important is because we do all of our lookups as
     # simple string matches, thus the character streams must be the same
     # for the lookups to work properly. See tests.py for more information.
+    if pickle_protocol is None:
+        pickle_protocol = get_default_protocol()
     if copy:
         # Copy can be very expensive if users aren't going to perform lookups
         # on the value anyway.
@@ -85,7 +92,10 @@ class PickledObjectField(models.Field):
 
     def __init__(self, *args, **kwargs):
         self.compress = kwargs.pop('compress', False)
-        self.protocol = kwargs.pop('protocol', DEFAULT_PROTOCOL)
+        protocol = kwargs.pop('protocol', None)
+        if protocol is None:
+            protocol = get_default_protocol()
+        self.protocol = protocol
         self.copy = kwargs.pop('copy', True)
         kwargs.setdefault('editable', False)
         super().__init__(*args, **kwargs)
@@ -135,6 +145,14 @@ class PickledObjectField(models.Field):
         errors = super().check(**kwargs)
         errors.extend(self._check_default())
         return errors
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        if self.compress:
+            kwargs['compress'] = True
+        if self.protocol != get_default_protocol():
+            kwargs['protocol'] = self.protocol
+        return name, path, args, kwargs
 
     def to_python(self, value):
         """

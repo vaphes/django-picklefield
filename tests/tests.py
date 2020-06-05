@@ -199,6 +199,17 @@ class PickledObjectFieldTests(TestCase):
             self.assertEqual(encoded_value, MinimalTestingModel.objects.get(pk=model.pk).pickle_field)
 
 
+class PickledObjectFieldDeconstructTests(SimpleTestCase):
+    def test_protocol(self):
+        field = PickledObjectField()
+        self.assertNotIn('protocol', field.deconstruct()[3])
+        with self.settings(PICKLEFIELD_DEFAULT_PROTOCOL=3):
+            field = PickledObjectField(protocol=4)
+            self.assertEqual(field.deconstruct()[3].get('protocol'), 4)
+            field = PickledObjectField(protocol=3)
+            self.assertNotIn('protocol', field.deconstruct()[3])
+
+
 @isolate_apps('tests')
 class PickledObjectFieldCheckTests(SimpleTestCase):
     def test_mutable_default_check(self):
