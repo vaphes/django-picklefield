@@ -7,7 +7,7 @@ from zlib import compress, decompress
 from django import VERSION as DJANGO_VERSION
 from django.core import checks
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from .constants import DEFAULT_PROTOCOL
 
@@ -189,13 +189,13 @@ class PickledObjectField(models.Field):
 
         """
         if value is not None and not isinstance(value, PickledObject):
-            # We call force_text here explicitly, so that the encoded string
+            # We call force_str here explicitly, so that the encoded string
             # isn't rejected by the postgresql_psycopg2 backend. Alternatively,
             # we could have just registered PickledObject with the psycopg
             # marshaller (telling it to store it like it would a string), but
             # since both of these methods result in the same value being stored,
             # doing things this way is much easier.
-            value = force_text(dbsafe_encode(value, self.compress, self.protocol, self.copy))
+            value = force_str(dbsafe_encode(value, self.compress, self.protocol, self.copy))
         return value
 
     def value_to_string(self, obj):
