@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from unittest.mock import patch
 
 from django.core import checks, serializers
 from django.db import IntegrityError, models
@@ -14,18 +15,13 @@ from .models import (
     TestCustomDataType, TestingModel,
 )
 
-try:
-    from unittest.mock import patch  # pragma: no cover
-except ImportError:
-    from mock import patch  # pragma: no cover
-
 
 class PickledObjectFieldTests(TestCase):
     def setUp(self):
         self.testing_data = (D2, S1, T1, L1,
                              TestCustomDataType(S1),
                              MinimalTestingModel)
-        return super(PickledObjectFieldTests, self).setUp()
+        return super().setUp()
 
     def test_data_integrity(self):
         """

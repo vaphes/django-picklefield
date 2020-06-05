@@ -1,7 +1,6 @@
-from __future__ import unicode_literals
-
 from base64 import b64decode, b64encode
 from copy import deepcopy
+from pickle import dumps, loads
 from zlib import compress, decompress
 
 from django import VERSION as DJANGO_VERSION
@@ -10,11 +9,6 @@ from django.db import models
 from django.utils.encoding import force_str
 
 from .constants import DEFAULT_PROTOCOL
-
-try:
-    from cPickle import loads, dumps  # pragma: no cover
-except ImportError:
-    from pickle import loads, dumps  # pragma: no cover
 
 
 class PickledObject(str):
