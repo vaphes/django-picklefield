@@ -162,8 +162,8 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
-UNRELEASED
-==========
+Changes in version 3.0.0
+========================
 
 * Allowed default pickle protocol to be overriden using the
   `PICKLEFIELD_DEFAULT_PROTOCOL` setting.
