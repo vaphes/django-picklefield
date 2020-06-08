@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import django.utils.version
 
 from .constants import DEFAULT_PROTOCOL
