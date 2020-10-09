@@ -10,11 +10,16 @@ python:
 stages:
   - lint
   - test
+arch:
+  - amd64
+  - ppc64le
 jobs:
   fast_finish: true
   include:
     - { stage: lint, env: TOXENV=flake8, python: 3.6 }
     - { stage: lint, env: TOXENV=isort, python: 3.6 }
+    - { stage: lint, env: TOXENV=flake8, python: 3.6, arch: ppc64le }
+    - { stage: lint, env: TOXENV=isort, python: 3.6, arch: ppc64le }
 
 install:
 - pip install tox coveralls tox-travis
