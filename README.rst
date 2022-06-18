@@ -162,6 +162,16 @@ since it is never a good idea to have a PickledObjectField be user editable.
 Changes
 -------
 
+Changes in version 3.1.0
+========================
+
+* Added testing against Django 3.2 and 4.0.
+
+Changes in version 3.0.1
+========================
+
+* None; addressed a packaging issue with 3.0.0
+
 Changes in version 3.0.0
 ========================
 
