@@ -9,8 +9,8 @@ django-picklefield
     :target: https://pypi.python.org/pypi/django-picklefield/
     :alt: Latest Version
 
-.. image:: https://travis-ci.org/gintas/django-picklefield.svg?branch=master
-    :target: https://travis-ci.org/gintas/django-picklefield
+.. image:: https://github.com/gintas/django-picklefield/workflows/Test/badge.svg?branch=master
+    :target: https://github.com/gintas/django-picklefield/actions
     :alt: Build Status
 
 .. image:: https://coveralls.io/repos/gintas/django-picklefield/badge.svg?branch=master
