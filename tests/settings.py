@@ -9,3 +9,5 @@ DATABASES = {
 INSTALLED_APPS = [
     'tests',
 ]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
