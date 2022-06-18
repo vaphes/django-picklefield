@@ -10,6 +10,7 @@ setup(
     version=picklefield.__version__,
     description='Pickled object field for Django',
     long_description=long_description,
+    long_description_content_type='text/x-rst',
     author='Simon Charette',
     author_email='charette.s+django-picklefiel@gmail.com',
     url='http://github.com/gintas/django-picklefield',
