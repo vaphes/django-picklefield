@@ -3,7 +3,7 @@ name = "django-picklefield"
 version = "0.1.0"
 description = ""
 authors = ["Vithor Jaeger <vaphes@gmail.com>"]
-readme = "README.md"
+readme = "README.rst"
 packages = [{ include = "picklefield" }]
 
 [tool.poetry.dependencies]
