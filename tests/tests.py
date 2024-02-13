@@ -7,20 +7,34 @@ from django.db import IntegrityError, models
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import isolate_apps
 from picklefield.fields import (
-    PickledObjectField, dbsafe_encode, wrap_conflictual_object,
+    PickledObjectField,
+    dbsafe_encode,
+    wrap_conflictual_object,
 )
 
 from .models import (
-    D1, D2, L1, S1, T1, MinimalTestingModel, TestCopyDataType,
-    TestCustomDataType, TestingModel,
+    D1,
+    D2,
+    L1,
+    S1,
+    T1,
+    MinimalTestingModel,
+    TestCopyDataType,
+    TestCustomDataType,
+    TestingModel,
 )
 
 
 class PickledObjectFieldTests(TestCase):
     def setUp(self):
-        self.testing_data = (D2, S1, T1, L1,
-                             TestCustomDataType(S1),
-                             MinimalTestingModel)
+        self.testing_data = (
+            D2,
+            S1,
+            T1,
+            L1,
+            TestCustomDataType(S1),
+            MinimalTestingModel,
+        )
         return super().setUp()
 
     def test_data_integrity(self):
@@ -31,7 +45,7 @@ class PickledObjectFieldTests(TestCase):
         for value in self.testing_data:
             model_test = TestingModel(pickle_field=value, compressed_pickle_field=value)
             model_test.save()
-            model_test = TestingModel.objects.get(id__exact=model_test.id)
+            model_test = TestingModel.objects.get(id__exact=model_test.pk)
             # Make sure that both the compressed and uncompressed fields return
             # the same data, even thought it's stored differently in the DB.
             self.assertEqual(value, model_test.pickle_field)
@@ -45,7 +59,7 @@ class PickledObjectFieldTests(TestCase):
         # correctly and that it isn't converted to a string.
         model_test = TestingModel(pickle_field=1, compressed_pickle_field=1)
         model_test.save()
-        model_test = TestingModel.objects.get(id__exact=model_test.id)
+        model_test = TestingModel.objects.get(id__exact=model_test.pk)
         self.assertEqual((D1, S1, T1, L1), model_test.default_pickle_field)
         self.assertEqual(date.today(), model_test.callable_pickle_field)
 
@@ -110,18 +124,26 @@ class PickledObjectFieldTests(TestCase):
             # Make sure that we can do an ``exact`` lookup by both the
             # pickle_field and the compressed_pickle_field.
             wrapped_value = wrap_conflictual_object(value)
-            model_test = TestingModel.objects.get(pickle_field__exact=wrapped_value,
-                                                  compressed_pickle_field__exact=wrapped_value)
+            model_test = TestingModel.objects.get(
+                pickle_field__exact=wrapped_value,
+                compressed_pickle_field__exact=wrapped_value,
+            )
             self.assertEqual(value, model_test.pickle_field)
             self.assertEqual(value, model_test.compressed_pickle_field)
             # Make sure that ``in`` lookups also work correctly.
-            model_test = TestingModel.objects.get(pickle_field__in=[wrapped_value],
-                                                  compressed_pickle_field__in=[wrapped_value])
+            model_test = TestingModel.objects.get(
+                pickle_field__in=[wrapped_value],
+                compressed_pickle_field__in=[wrapped_value],
+            )
             self.assertEqual(value, model_test.pickle_field)
             self.assertEqual(value, model_test.compressed_pickle_field)
             # Make sure that ``is_null`` lookups are working.
-            self.assertEqual(1, TestingModel.objects.filter(pickle_field__isnull=False).count())
-            self.assertEqual(0, TestingModel.objects.filter(pickle_field__isnull=True).count())
+            self.assertEqual(
+                1, TestingModel.objects.filter(pickle_field__isnull=False).count()
+            )
+            self.assertEqual(
+                0, TestingModel.objects.filter(pickle_field__isnull=True).count()
+            )
             model_test.delete()
 
         # Make sure that lookups of the same value work, even when referenced
@@ -144,39 +166,44 @@ class PickledObjectFieldTests(TestCase):
         """
         Test that picklefield supports lookup type limit
         """
-        with self.assertRaisesMessage(TypeError, 'Lookup type gte is not supported'):
+        with self.assertRaisesMessage(TypeError, "Lookup type gte is not supported"):
             TestingModel.objects.filter(pickle_field__gte=1)
 
     def test_serialization(self):
-        model = MinimalTestingModel(pk=1, pickle_field={'foo': 'bar'})
-        serialized = serializers.serialize('json', [model])
+        model = MinimalTestingModel(pk=1, pickle_field={"foo": "bar"})
+        serialized = serializers.serialize("json", [model])
         data = json.loads(serialized)
 
         # determine output at runtime, because pickle output in python 3
         # is different (but compatible with python 2)
-        p = dbsafe_encode({'foo': 'bar'})
+        p = dbsafe_encode({"foo": "bar"})
 
-        self.assertEqual(data, [{
-            'pk': 1,
-            'model': 'tests.minimaltestingmodel',
-            'fields': {"pickle_field": p}},
-        ])
+        self.assertEqual(
+            data,
+            [
+                {
+                    "pk": 1,
+                    "model": "tests.minimaltestingmodel",
+                    "fields": {"pickle_field": p},
+                },
+            ],
+        )
 
-        for deserialized_test in serializers.deserialize('json', serialized):
+        for deserialized_test in serializers.deserialize("json", serialized):
             self.assertEqual(deserialized_test.object, model)
 
     def test_no_copy(self):
         TestingModel.objects.create(
-            pickle_field='Copy Me',
-            compressed_pickle_field='Copy Me',
-            non_copying_field=TestCopyDataType('Dont Copy Me')
+            pickle_field="Copy Me",
+            compressed_pickle_field="Copy Me",
+            non_copying_field=TestCopyDataType("Dont Copy Me"),
         )
 
         with self.assertRaises(ValueError):
             TestingModel.objects.create(
-                pickle_field=TestCopyDataType('BOOM!'),
-                compressed_pickle_field='Copy Me',
-                non_copying_field='Dont copy me'
+                pickle_field=TestCopyDataType("BOOM!"),
+                compressed_pickle_field="Copy Me",
+                non_copying_field="Dont copy me",
             )
 
     def test_empty_strings_not_allowed(self):
@@ -187,30 +214,32 @@ class PickledObjectFieldTests(TestCase):
         def mock_decode_error(*args, **kwargs):
             raise Exception()
 
-        model = MinimalTestingModel.objects.create(pickle_field={'foo': 'bar'})
+        model = MinimalTestingModel.objects.create(pickle_field={"foo": "bar"})
         model.save()
 
         self.assertEqual(
-            {'foo': 'bar'}, MinimalTestingModel.objects.get(pk=model.pk).pickle_field
+            {"foo": "bar"}, MinimalTestingModel.objects.get(pk=model.pk).pickle_field
         )
 
-        with patch('picklefield.fields.dbsafe_decode', mock_decode_error):
-            encoded_value = dbsafe_encode({'foo': 'bar'})
-            self.assertEqual(encoded_value, MinimalTestingModel.objects.get(pk=model.pk).pickle_field)
+        with patch("picklefield.fields.dbsafe_decode", mock_decode_error):
+            encoded_value = dbsafe_encode({"foo": "bar"})
+            self.assertEqual(
+                encoded_value, MinimalTestingModel.objects.get(pk=model.pk).pickle_field
+            )
 
 
 class PickledObjectFieldDeconstructTests(SimpleTestCase):
     def test_protocol(self):
         field = PickledObjectField()
-        self.assertNotIn('protocol', field.deconstruct()[3])
+        self.assertNotIn("protocol", field.deconstruct()[3])
         with self.settings(PICKLEFIELD_DEFAULT_PROTOCOL=3):
             field = PickledObjectField(protocol=4)
-            self.assertEqual(field.deconstruct()[3].get('protocol'), 4)
+            self.assertEqual(field.deconstruct()[3].get("protocol"), 4)
             field = PickledObjectField(protocol=3)
-            self.assertNotIn('protocol', field.deconstruct()[3])
+            self.assertNotIn("protocol", field.deconstruct()[3])
 
 
-@isolate_apps('tests')
+@isolate_apps("tests")
 class PickledObjectFieldCheckTests(SimpleTestCase):
     def test_mutable_default_check(self):
         class Model(models.Model):
@@ -223,26 +252,30 @@ class PickledObjectFieldCheckTests(SimpleTestCase):
             "that it's not shared between all field instances."
         )
 
-        self.assertEqual(Model().check(), [
-            checks.Warning(
-                msg=msg,
-                hint='Use a callable instead, e.g., use `list` instead of `[]`.',
-                obj=Model._meta.get_field('list_field'),
-                id='picklefield.E001',
-            ),
-            checks.Warning(
-                msg=msg,
-                hint='Use a callable instead, e.g., use `dict` instead of `{}`.',
-                obj=Model._meta.get_field('dict_field'),
-                id='picklefield.E001',
-            ),
-            checks.Warning(
-                msg=msg,
-                hint='Use a callable instead, e.g., use `set` instead of `%s`.' % repr(set()),
-                obj=Model._meta.get_field('set_field'),
-                id='picklefield.E001',
-            )
-        ])
+        self.assertEqual(
+            Model().check(),
+            [
+                checks.Warning(
+                    msg=msg,
+                    hint="Use a callable instead, e.g., use `list` instead of `[]`.",
+                    obj=Model._meta.get_field("list_field"),
+                    id="picklefield.E001",
+                ),
+                checks.Warning(
+                    msg=msg,
+                    hint="Use a callable instead, e.g., use `dict` instead of `{}`.",
+                    obj=Model._meta.get_field("dict_field"),
+                    id="picklefield.E001",
+                ),
+                checks.Warning(
+                    msg=msg,
+                    hint="Use a callable instead, e.g., use `set` instead of `%s`."
+                    % repr(set()),
+                    obj=Model._meta.get_field("set_field"),
+                    id="picklefield.E001",
+                ),
+            ],
+        )
 
     def test_non_mutable_default_check(self):
         class Model(models.Model):
